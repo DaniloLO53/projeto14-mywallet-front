@@ -13,8 +13,6 @@ function ContextProvider({ children }) {
     ...data,
   }), [loading, setLoading, data]);
 
-  // console.log(context);
-
   return (
     <Context.Provider value={context}>
       {children}

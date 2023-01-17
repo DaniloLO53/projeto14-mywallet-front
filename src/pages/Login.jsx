@@ -1,11 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from 'axios';
+// import dotenv from 'dotenv';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Context from '../context/Context';
+
+// dotenv.config();
 
 function Login() {
+  const { loading, setLoading } = useContext(Context);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+
+  const navigate = useNavigate();
+
+  const { setSignupData } = useContext(Context);
+
+  const handleClick = () => {
+    const URL = process.env.REACT_APP_API_URL;
+
+    console.log(URL)
+
+    const config = {
+      headers: {
+        'Content-type': 'application/json',
+        email,
+        password,
+      },
+    };
+    const controller = new AbortController();
+    // const { signal } = controller;
+
+    setLoading(true);
+
+    const fetcher = async () => {
+      try {
+        const dataFetched = await axios.get(URL, config);
+        setSignupData(dataFetched);
+        setLoading(false);
+        navigate('/home');
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    };
+    fetcher();
+
+    return () => {
+      console.log('Cleaning');
+      controller.abort();
+    };
+  };
+
+  console.log(loading);
 
 
   return (
@@ -37,14 +83,14 @@ function Login() {
 
           <button
             type="button"
-            onClick={() => 0}
+            onClick={handleClick}
           >
             Entrar
           </button>
 
           <button
             type="button"
-            onClick={() => 0}
+            onClick={() => navigate('/cadastro')}
           >
             Primeira vez? Cadastre-se!
           </button>

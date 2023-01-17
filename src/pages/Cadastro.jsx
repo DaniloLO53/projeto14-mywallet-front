@@ -15,13 +15,15 @@ function Cadastro() {
     password,
     name,
     setName,
+    confirmPassword,
+    setConfirmPassword,
     disabled,
   } = useContext(Context);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
-    const URL = 'https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up';
+    const URL = process.env.REACT_APP_API_URL;
     const payload = {
       email,
       name,
@@ -34,7 +36,7 @@ function Cadastro() {
 
     const fetcher = async () => {
       try {
-        const dataFetched = await axios.post(URL, payload);
+        await axios.post(URL, payload);
         // console.log(dataFetched);
         setLoading(false);
         navigate('/');
@@ -55,16 +57,26 @@ function Cadastro() {
   return (
     <StyledLogin>
       <figure>
-        <img alt="login" src="./logo.png" />
+        <img alt="login" src="./MyWallet.png" />
       </figure>
 
       <form>
+        <label htmlFor="name">
+          <input
+            type="text"
+            id="name"
+            placeholder="Nome"
+            value={name}
+            disabled={loading}
+            onChange={({ target }) => setName(target.value)}
+          />
+        </label>
         <label htmlFor="email">
           <input
             type="text"
             id="email"
             disabled={loading}
-            placeholder="Email"
+            placeholder="E-mail"
             value={email}
             onChange={({ target }) => setEmail(target.value)}
           />
@@ -74,19 +86,19 @@ function Cadastro() {
             type="text"
             id="password"
             disabled={loading}
-            placeholder="Password"
+            placeholder="Senha"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </label>
-        <label htmlFor="name">
+        <label htmlFor="confirmPassword">
           <input
             type="text"
-            id="name"
-            placeholder="Nome"
-            value={name}
+            id="confirmPassword"
             disabled={loading}
-            onChange={({ target }) => setName(target.value)}
+            placeholder="Confirme a senha"
+            value={confirmPassword}
+            onChange={({ target }) => setConfirmPassword(target.value)}
           />
         </label>
 
