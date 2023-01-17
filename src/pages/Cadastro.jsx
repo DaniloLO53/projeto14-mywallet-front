@@ -15,8 +15,6 @@ function Cadastro() {
     password,
     name,
     setName,
-    photo,
-    setPhoto,
     disabled,
   } = useContext(Context);
 
@@ -27,7 +25,6 @@ function Cadastro() {
     const payload = {
       email,
       name,
-      image: photo,
       password,
     };
     const controller = new AbortController();
@@ -90,16 +87,6 @@ function Cadastro() {
             value={name}
             disabled={loading}
             onChange={({ target }) => setName(target.value)}
-          />
-        </label>
-        <label htmlFor="photo">
-          <input
-            type="text"
-            disabled={loading}
-            id="photo"
-            placeholder="Foto"
-            value={photo}
-            onChange={({ target }) => setPhoto(target.value)}
           />
         </label>
 
