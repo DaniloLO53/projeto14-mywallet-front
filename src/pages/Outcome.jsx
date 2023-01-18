@@ -1,31 +1,30 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from 'axios';
-// import dotenv from 'dotenv';
+import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 // dotenv.config();
 
-function Login() {
+function Outcome() {
   const { loading, setLoading } = useContext(Context);
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [value, setValue] = useState('');
+  const [description, setDescription] = useState('');
+  const { wallet, setWallet, signupData } = useContext(Context);
+
+  const { email } = signupData.data;
 
   const navigate = useNavigate();
 
-  const { setSignupData } = useContext(Context);
+  useEffect(() => {
+    if (value.length === 0 || description.length === 0) return;
 
-  const handleClick = () => {
     const URL = process.env.REACT_APP_API_URL;
-
-    // console.log(URL)
 
     const config = {
       headers: {
-        'Content-type': 'application/json',
-        email,
-        password,
+        'Content-Type': 'application/json',
       },
     };
     const controller = new AbortController();
@@ -33,10 +32,22 @@ function Login() {
 
     setLoading(true);
 
+    // console.log(signupData)
+
     const fetcher = async () => {
       try {
-        const dataFetched = await axios.get(URL, config);
-        setSignupData(dataFetched);
+        const dataFetched = await axios.put(URL,
+          {
+            data: {
+              wallet,
+              email
+            },
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          });
+        // console.log(dataFetched.data)
+        setWallet(dataFetched.data);
         setLoading(false);
         navigate('/home');
       } catch (error) {
@@ -49,58 +60,55 @@ function Login() {
       console.log('Cleaning');
       controller.abort();
     };
-  };
-
-  // console.log(loading);
-
+  }, [wallet]);
 
   return (
     <div>
-      <StyledLogin>
+      <StyledOutcome>
         <figure>
-          <img alt="login" src="./MyWallet.png" />
+          <img alt="Outcome" src="./MyWallet.png" />
         </figure>
 
         <form>
-          <label htmlFor="email">
+          <label htmlFor="value">
             <input
               type="text"
-              id="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={({ target }) => setEmail(target.value)}
+              id="value"
+              placeholder="Valor"
+              value={value}
+              onChange={({ target }) => setValue(target.value)}
             />
           </label>
-          <label htmlFor="password">
+          <label htmlFor="description">
             <input
               type="text"
-              id="password"
-              placeholder="Senha"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
+              id="description"
+              placeholder="Descrição"
+              value={description}
+              onChange={({ target }) => setDescription(target.value)}
             />
           </label>
 
           <button
             type="button"
-            onClick={handleClick}
+            onClick={() => setWallet((prevState) => [...prevState, {
+              type: 'outcome',
+              value,
+              description,
+              now: dayjs(Date.now()).format('DD/MM')
+            }
+            ])}
           >
-            Entrar
+            Salvar saída
           </button>
 
-          <button
-            type="button"
-            onClick={() => navigate('/cadastro')}
-          >
-            Primeira vez? Cadastre-se!
-          </button>
         </form>
-      </StyledLogin>
+      </StyledOutcome>
     </div>
   )
 };
 
-const StyledLogin = styled.div`
+const StyledOutcome = styled.div`
   background-color: #7e35be;;
   display: flex;
   flex-direction: column;
@@ -154,4 +162,4 @@ const StyledLogin = styled.div`
   }
 `;
 
-export { Login, StyledLogin };
+export { Outcome, StyledOutcome };

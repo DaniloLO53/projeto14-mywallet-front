@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from 'axios';
 // import dotenv from 'dotenv';
 import styled from 'styled-components';
@@ -9,7 +9,9 @@ import Context from '../context/Context';
 function Home() {
   const { signupData } = useContext(Context);
   const data = signupData?.data || [];
-  console.log(data)
+  // console.log(data)
+  const [total, setTotal] = useState(0);
+
 
   const {
     loading,
@@ -26,9 +28,18 @@ function Home() {
     wallet,
   } = useContext(Context);
 
+  useEffect(() => {
+    wallet.map(({ type, value }) => setTotal((prevState) => type === 'income' ?
+      prevState + Number(value) :
+      prevState - Number(value))
+    );
+  }, [wallet.length]);
+
+  useEffect(() => console.log(total, 'Now: ', Date.now()), [total]);
+
   const navigate = useNavigate();
 
-  console.log(wallet);
+  // console.log(wallet);
   return (
     <div>
       <StyledHome>
@@ -46,14 +57,14 @@ function Home() {
               </p> :
               <>
                 <ul>
-                  {wallet.map(({ value, description, now }) => (
+                  {wallet.map(({ value, description, now, type }) => (
                     <li key={value + description}>
                       <div>
                         <p>{now}</p>
                         <p>{description}</p>
                       </div>
                       <div>
-                        <p>{value}</p>
+                        <StyledIncome type={type}>{value}</StyledIncome>
                       </div>
                     </li>
                   ))}
@@ -61,7 +72,7 @@ function Home() {
                 </ul>
                 <div>
                   <h3>SALDO</h3>
-                  <p>Valor</p>
+                  <StyledTotal color={total >= 0 ? 'green' : 'red'}>{total}</StyledTotal>
                 </div>
               </>
           }
@@ -83,10 +94,18 @@ function Home() {
             Nova saída
           </button>
         </div>
-      </StyledHome>
-    </div>
+      </StyledHome >
+    </div >
   )
 };
+
+const StyledIncome = styled.p`
+  color: ${({ type }) => type === 'income' ? 'green' : 'red'};
+`;
+
+const StyledTotal = styled.h4`
+  color: ${({ color }) => color};
+`;
 
 const StyledHome = styled.div`
   background-color: #7e35be;;
@@ -123,7 +142,7 @@ const StyledHome = styled.div`
     }
 
     & > div {
-      background-color: green;
+      /* background-color: green; */
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -132,7 +151,7 @@ const StyledHome = styled.div`
     }
 
     ul {
-      background-color: green;
+      /* background-color: green; */
       list-style-type: none;
       width: 100%;
       min-height: 100%;
@@ -154,14 +173,22 @@ const StyledHome = styled.div`
             }
 
           &:nth-child(1) {
-            background-color: red;
+            /* background-color: red; */
             width: 75%;
+            
+            p:first-of-type{
+              color: #C6C6C6;
+            }
           }
 
           &:nth-child(2) {
-            background-color: blue;
+            /* background-color: blue; */
             width: 25%;
             justify-content: flex-end;
+
+            /* p {
+              color: ${({ type }) => type === 'income' ? 'green' : String(type)};
+            } */
           }
         }
       }

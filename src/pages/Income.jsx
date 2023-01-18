@@ -22,8 +22,6 @@ function Income() {
 
     const URL = process.env.REACT_APP_API_URL;
 
-    console.log(wallet)
-
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +36,6 @@ function Income() {
 
     const fetcher = async () => {
       try {
-        console.log(wallet, email)
         const dataFetched = await axios.put(URL,
           {
             data: {
@@ -49,7 +46,7 @@ function Income() {
               'Content-Type': 'application/json',
             }
           });
-        console.log(dataFetched.data)
+        // console.log(dataFetched.data)
         setWallet(dataFetched.data);
         setLoading(false);
         navigate('/home');
@@ -64,17 +61,6 @@ function Income() {
       controller.abort();
     };
   }, [wallet]);
-
-  const now = dayjs(Date.now()).format('DD/MM');
-
-
-
-  // const handleClick = () => {
-  //   setWallet((prevState) => [...prevState, { value, description }]);
-  // };
-
-  // console.log(loading);
-
 
   return (
     <div>

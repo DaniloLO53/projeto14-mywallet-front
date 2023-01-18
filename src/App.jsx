@@ -5,7 +5,7 @@ import ContextProvider from "./context/ContextProvider";
 import Cadastro from "./pages/Cadastro";
 import { Home } from "./pages/Home";
 import { Income } from "./pages/Income";
-// import { Outcome } from "./pages/Outcome";
+import { Outcome } from "./pages/Outcome";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
           <Route element={<Cadastro />} path="/cadastro" />
           <Route element={<Home />} path="/home" />
           <Route element={<Income />} path="/nova-entrada" />
-          {/* <Route element={<Outcome />} path="/nova-saida" /> */}
+          <Route element={<Outcome />} path="/nova-saida" />
         </Routes>
       </ContextProvider>
     </>
