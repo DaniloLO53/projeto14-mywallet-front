@@ -6,6 +6,7 @@ function ContextSignup() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const [wallet, setWallet] = useState([]);
   const [signupData, setSignupData] = useState({});
 
   const MIN_LENGTH_PASSWORD = 1;
@@ -28,6 +29,8 @@ function ContextSignup() {
     name,
     setName,
     disabled,
+    wallet,
+    setWallet,
     signupData,
     setSignupData,
   };

@@ -23,11 +23,12 @@ function Home() {
     confirmPassword,
     setConfirmPassword,
     disabled,
+    wallet,
   } = useContext(Context);
 
   const navigate = useNavigate();
 
-  console.log(loading);
+  console.log(wallet);
   return (
     <div>
       <StyledHome>
@@ -38,12 +39,31 @@ function Home() {
 
         <div>
           {
-            data.length === 0 ?
+            wallet.length === 0 ?
               <p className="no-register">
                 Não há registros de
                 entrada ou saída
               </p> :
-              'pru'
+              <>
+                <ul>
+                  {wallet.map(({ value, description, now }) => (
+                    <li key={value + description}>
+                      <div>
+                        <p>{now}</p>
+                        <p>{description}</p>
+                      </div>
+                      <div>
+                        <p>{value}</p>
+                      </div>
+                    </li>
+                  ))}
+
+                </ul>
+                <div>
+                  <h3>SALDO</h3>
+                  <p>Valor</p>
+                </div>
+              </>
           }
         </div>
 
@@ -93,13 +113,58 @@ const StyledHome = styled.div`
     min-height: calc(100vh - 230px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 
     p[class=no-register] {
       width: 30%;
       text-align: center;
       color: #868686;
+    }
+
+    & > div {
+      background-color: green;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+    }
+
+    ul {
+      background-color: green;
+      list-style-type: none;
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      li {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        div {
+          display: flex;
+          flex-direction: row;
+          background-color: white;
+
+          p {
+              margin: 10px;
+            }
+
+          &:nth-child(1) {
+            background-color: red;
+            width: 75%;
+          }
+
+          &:nth-child(2) {
+            background-color: blue;
+            width: 25%;
+            justify-content: flex-end;
+          }
+        }
+      }
     }
 
   }
