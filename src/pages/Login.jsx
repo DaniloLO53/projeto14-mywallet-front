@@ -1,11 +1,8 @@
 import React, { useState, useContext } from "react";
 import axios from 'axios';
-// import dotenv from 'dotenv';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
-
-// dotenv.config();
 
 function Login() {
   const { loading, setLoading } = useContext(Context);
@@ -19,23 +16,16 @@ function Login() {
   const handleClick = () => {
     const URL = process.env.REACT_APP_API_URL;
 
-    // console.log(URL)
-
-    const config = {
-      headers: {
-        'Content-type': 'application/json',
-        email,
-        password,
-      },
-    };
     const controller = new AbortController();
-    // const { signal } = controller;
 
     setLoading(true);
 
     const fetcher = async () => {
       try {
-        const dataFetched = await axios.get(URL, config);
+        const dataFetched = await axios.post(URL, {
+          email,
+          password,
+        });
         setSignupData(dataFetched);
         setLoading(false);
         navigate('/home');

@@ -17,13 +17,13 @@ function Cadastro() {
     setName,
     confirmPassword,
     setConfirmPassword,
-    disabled,
   } = useContext(Context);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
-    const URL = process.env.REACT_APP_API_URL;
+    const URL_REACT = process.env.REACT_APP_API_URL;
+    console.log(process.env)
     const payload = {
       email,
       name,
@@ -36,8 +36,7 @@ function Cadastro() {
 
     const fetcher = async () => {
       try {
-        await axios.post(URL, payload);
-        // console.log(dataFetched);
+        await axios.post(`${URL_REACT}/cadastro`, payload);
         setLoading(false);
         navigate('/');
       } catch (error) {

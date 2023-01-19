@@ -1,32 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
 import axios from 'axios';
-// import dotenv from 'dotenv';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 
 function Home() {
-  const { signupData } = useContext(Context);
+  const { signupData, wallet } = useContext(Context);
   const data = signupData?.data || [];
-  // console.log(data)
   const [total, setTotal] = useState(0);
-
-
-  const {
-    loading,
-    setLoading,
-    setEmail,
-    email,
-    setPassword,
-    password,
-    name,
-    setName,
-    confirmPassword,
-    setConfirmPassword,
-    disabled,
-    wallet,
-  } = useContext(Context);
 
   useEffect(() => {
     wallet.map(({ type, value }) => setTotal((prevState) => type === 'income' ?
@@ -34,6 +16,34 @@ function Home() {
       prevState - Number(value))
     );
   }, [wallet.length]);
+
+  useEffect(() => {
+    const URL_REACT = process.env.REACT_APP_API_URL;
+    console.log(process.env)
+
+    const controller = new AbortController();
+    // const { signal } = controller;
+
+    // setLoading(true);
+
+    const fetcher = async () => {
+      try {
+        const token = await axios.get(`${URL_REACT}/home`);
+        console.log(token)
+        // setLoading(false);
+      } catch (error) {
+        // setLoading(false);
+        alert(error.message);
+        throw new Error(error.message);
+      }
+    };
+    fetcher();
+
+    return () => {
+      console.log('Cleaning');
+      controller.abort();
+    };
+  }, []);
 
   useEffect(() => console.log(total, 'Now: ', Date.now()), [total]);
 
