@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 function Home() {
-  const { signupData, userId } = useContext(Context);
-  const data = signupData?.data || [];
+  const { signupData, userId, name } = useContext(Context);
   const [total, setTotal] = useState(0);
   const [wallet, setWallet] = useState([]);
   const [entries, setEntries] = useState([]);
@@ -81,11 +80,13 @@ function Home() {
 
   const navigate = useNavigate();
 
+  console.log(name)
+
   return (
     <div>
       <StyledHome>
         <div>
-          <h2>Olá, {data?.name}</h2>
+          <h2>Olá, {name}</h2>
           <img alt="vector" src="./Vector.png"></img>
         </div>
 

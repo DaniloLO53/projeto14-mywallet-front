@@ -6,8 +6,6 @@ import { StyledLogin } from './Login';
 
 function Cadastro() {
   const {
-    loading,
-    setLoading,
     setContextEmail,
     contextEmail,
     setPassword,
@@ -62,7 +60,6 @@ function Cadastro() {
             id="name"
             placeholder="Nome"
             value={name}
-            disabled={loading}
             onChange={({ target }) => setName(target.value)}
           />
         </label>
@@ -70,7 +67,6 @@ function Cadastro() {
           <input
             type="text"
             id="email"
-            disabled={loading}
             placeholder="E-mail"
             value={contextEmail}
             onChange={({ target }) => setContextEmail(target.value)}
@@ -80,7 +76,6 @@ function Cadastro() {
           <input
             type="text"
             id="password"
-            disabled={loading}
             placeholder="Senha"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
@@ -90,7 +85,6 @@ function Cadastro() {
           <input
             type="text"
             id="confirmPassword"
-            disabled={loading}
             placeholder="Confirme a senha"
             value={confirmPassword}
             onChange={({ target }) => setConfirmPassword(target.value)}

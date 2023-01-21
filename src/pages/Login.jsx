@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 function Login() {
-  const { setContextEmail, setSignupData, setUserId } = useContext(Context);
+  const { setContextEmail, setSignupData, setUserId, setName } = useContext(Context);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
@@ -24,6 +24,7 @@ function Login() {
         });
         const { data } = dataFetched;
         setContextEmail(email);
+        setName(data.name)
         setSignupData(data.token);
         setUserId(data.userId);
         navigate('/home');
