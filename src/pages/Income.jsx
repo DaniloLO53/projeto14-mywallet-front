@@ -1,19 +1,14 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import axios from 'axios';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
-// dotenv.config();
-
 function Income() {
-  const { loading, setLoading, contextEmail } = useContext(Context);
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
-  const { signupData, email } = useContext(Context);
-
-  console.log(contextEmail)
+  const { signupData } = useContext(Context);
 
   const navigate = useNavigate();
 
@@ -30,10 +25,6 @@ function Income() {
     const controller = new AbortController();
     // const { signal } = controller;
 
-    setLoading(true);
-
-    // console.log(signupData)
-
     const fetcher = async () => {
       const registerData = {
         now: dayjs(Date.now()).format('DD/MM'),
@@ -43,12 +34,9 @@ function Income() {
       };
 
       try {
-        const dataFetched = await axios.put(`${URL}/nova-entrada`, registerData, config);
-        console.log('From PUT /nova-entrada ', dataFetched);
-        // console.log(dataFetched.data)
-        // setWallet(dataFetched.data);
-        setLoading(false);
+        await axios.put(`${URL}/nova-entrada`, registerData, config);
         navigate('/home');
+
       } catch (error) {
         throw new Error(error.message);
       }
@@ -114,13 +102,11 @@ const StyledIncome = styled.div`
     margin-bottom: 30px;    
   }
   form {
-    /* background-color: yellow; */
     display: flex;
     flex-direction: column;
     width: 80%;
 
     label {
-      /* background-color: purple; */
       width: 100%;
       display: flex;
       justify-content: center;

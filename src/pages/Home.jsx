@@ -4,20 +4,14 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
-
 function Home() {
-  const { signupData, register, setRegister, userId } = useContext(Context);
+  const { signupData, userId } = useContext(Context);
   const data = signupData?.data || [];
   const [total, setTotal] = useState(0);
   const [wallet, setWallet] = useState([]);
   const [entries, setEntries] = useState([]);
 
-  // console.log('Token at home: ', signupData)
-
   useEffect(() => {
-    console.log('Calculating total...')
-    console.log('Entries: ', entries)
-    console.log('Entries length: ', entries.length)
     setTotal(0);
     entries.length > 0 && entries.forEach(({ value, type }) => {
       return setTotal((prevState) => {
@@ -106,7 +100,7 @@ function Home() {
                 <ul>
                   {entries.map((data, index) => {
                     const { value, description, now, type } = data;
-                    console.log(data);
+
                     return (
                       <li key={value + description}>
                         <div>
@@ -180,7 +174,6 @@ const StyledHome = styled.div`
   min-height: 100vh;
 
   & > div:first-of-type {
-    /* background-color: red; */
     width: 100%;
     display: flex;
     color: white;
@@ -206,7 +199,6 @@ const StyledHome = styled.div`
     }
 
     & > div {
-      /* background-color: green; */
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -215,7 +207,6 @@ const StyledHome = styled.div`
     }
 
     ul {
-      /* background-color: green; */
       list-style-type: none;
       width: 100%;
       min-height: 100%;
@@ -236,7 +227,6 @@ const StyledHome = styled.div`
             }
 
           &:nth-child(1) {
-            /* background-color: red; */
             width: 75%;
             
             p:first-of-type{
@@ -255,17 +245,9 @@ const StyledHome = styled.div`
           }
 
           &:nth-child(2) {
-            /* background-color: blue; */
             width: 25%;
             justify-content: flex-end;
-
-            button {
-              background-color: blue;
-              border: none;
-            }
-
           }
-
         }
 
         button {
@@ -278,11 +260,9 @@ const StyledHome = styled.div`
         }
       }
     }
-
   }
 
   & > div:nth-of-type(3) {
-    /* background-color: green; */
     width: 100%;
     display: flex;
     align-items: center;
@@ -301,7 +281,6 @@ const StyledHome = styled.div`
       justify-content: space-around;
       align-items: center;
     }
-
   }
 `;
 

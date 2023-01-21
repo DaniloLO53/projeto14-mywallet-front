@@ -1,24 +1,17 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import axios from 'axios';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import Context from '../context/Context';
 
-// dotenv.config();
-
 function OutcomeEdit() {
-  const { loading, setLoading, contextEmail } = useContext(Context);
+  const { signupData } = useContext(Context);
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
-  const { signupData, email } = useContext(Context);
-
-  console.log(contextEmail)
 
   const navigate = useNavigate();
   let { id } = useParams();
-
-  console.log(id)
 
   function editOutcome() {
     if (value.length === 0 || description.length === 0) return;
@@ -31,11 +24,6 @@ function OutcomeEdit() {
       },
     };
     const controller = new AbortController();
-    // const { signal } = controller;
-
-    setLoading(true);
-
-    // console.log(signupData)
 
     const fetcher = async () => {
       const registerData = {
@@ -48,12 +36,7 @@ function OutcomeEdit() {
       };
 
       try {
-        console.log('Sending...')
-        const dataFetched = await axios.put(`${URL}/editar-saida/${id}`, registerData, config);
-        console.log(dataFetched);
-        // console.log(dataFetched.data)
-        // setWallet(dataFetched.data);
-        // setLoading(false);
+        await axios.put(`${URL}/editar-saida/${id}`, registerData, config);
         navigate('/home');
       } catch (error) {
         throw new Error(error.message);
@@ -121,13 +104,11 @@ const StyledOutcomeEdit = styled.div`
   }
 
   form {
-    /* background-color: yellow; */
     display: flex;
     flex-direction: column;
     width: 80%;
 
     label {
-      /* background-color: purple; */
       width: 100%;
       display: flex;
       justify-content: center;

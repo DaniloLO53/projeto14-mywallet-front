@@ -5,20 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 function Login() {
-  const { loading, setLoading, setContextEmail, contextEmail } = useContext(Context);
+  const { setContextEmail, setSignupData, setUserId } = useContext(Context);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
   const navigate = useNavigate();
 
-  const { setSignupData, setUserId } = useContext(Context);
-
   const handleClick = () => {
     const URL = process.env.REACT_APP_API_URL;
 
     const controller = new AbortController();
-
-    setLoading(true);
 
     const fetcher = async () => {
       try {
@@ -27,12 +23,11 @@ function Login() {
           password,
         });
         const { data } = dataFetched;
-        console.log('Data fetched at login button: ', data);
         setContextEmail(email);
         setSignupData(data.token);
         setUserId(data.userId);
-        setLoading(false);
         navigate('/home');
+
       } catch (error) {
         throw new Error(error.message);
       }
@@ -44,9 +39,6 @@ function Login() {
       controller.abort();
     };
   };
-
-  // console.log(loading);
-
 
   return (
     <div>
@@ -106,13 +98,11 @@ const StyledLogin = styled.div`
     margin-bottom: 30px;    
   }
   form {
-    /* background-color: yellow; */
     display: flex;
     flex-direction: column;
     width: 80%;
 
     label {
-      /* background-color: purple; */
       width: 100%;
       display: flex;
       justify-content: center;

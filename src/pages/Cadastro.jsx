@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Loading from '../components/Loading';
 import Context from '../context/Context';
 import { StyledLogin } from './Login';
 
@@ -23,7 +22,6 @@ function Cadastro() {
 
   const handleClick = () => {
     const URL_REACT = process.env.REACT_APP_API_URL;
-    console.log(process.env)
     const payload = {
       email: contextEmail,
       name,
@@ -33,15 +31,12 @@ function Cadastro() {
     const controller = new AbortController();
     // const { signal } = controller;
 
-    setLoading(true);
-
     const fetcher = async () => {
       try {
         await axios.post(`${URL_REACT}/cadastro`, payload);
-        setLoading(false);
         navigate('/');
+
       } catch (error) {
-        setLoading(false);
         alert(error.message);
         throw new Error(error.message);
       }
@@ -104,7 +99,6 @@ function Cadastro() {
 
         <button
           type="button"
-          // disabled={disabled}
           onClick={() => handleClick()}
         >
           {'Cadastrar'}
