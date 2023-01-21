@@ -6,33 +6,48 @@ import Context from '../context/Context';
 
 
 function Home() {
-  const { signupData, wallet } = useContext(Context);
+  const { signupData, register, setRegister, userId } = useContext(Context);
   const data = signupData?.data || [];
   const [total, setTotal] = useState(0);
+  const [wallet, setWallet] = useState([]);
+  const [entries, setEntries] = useState([]);
+
+  // console.log('Token at home: ', signupData)
 
   useEffect(() => {
-    wallet.map(({ type, value }) => setTotal((prevState) => type === 'income' ?
-      prevState + Number(value) :
-      prevState - Number(value))
-    );
+    console.log('Calculating total...')
+    console.log('Entries: ', entries)
+    console.log('Entries length: ', entries.length)
+    setTotal(0);
+    entries.length > 0 && entries.forEach(({ value, type }) => {
+      return setTotal((prevState) => {
+        return type === 'income' ? prevState + Number(value) : prevState - Number(value);
+      });
+    });
+  }, [entries.length]);
+
+  useEffect(() => {
+    const userRegister = wallet.find((data) => data.userId === userId);
+    setEntries(userRegister?.registers || []);
+
   }, [wallet.length]);
 
   useEffect(() => {
     const URL_REACT = process.env.REACT_APP_API_URL;
-    console.log(process.env)
-
     const controller = new AbortController();
     // const { signal } = controller;
 
-    // setLoading(true);
+    const config = {
+      headers: {
+        authorization: signupData,
+      },
+    };
 
     const fetcher = async () => {
       try {
-        const token = await axios.get(`${URL_REACT}/home`);
-        console.log(token)
-        // setLoading(false);
+        const { data: registers } = await axios.get(`${URL_REACT}/home`, config);
+        setWallet(registers);
       } catch (error) {
-        // setLoading(false);
         alert(error.message);
         throw new Error(error.message);
       }
@@ -45,11 +60,33 @@ function Home() {
     };
   }, []);
 
-  useEffect(() => console.log(total, 'Now: ', Date.now()), [total]);
+  async function deleteRegister(target) {
+    const { name } = target;
+    const URL_REACT = process.env.REACT_APP_API_URL;
+    const controller = new AbortController();
+    // const { signal } = controller;
+
+    const fetcher = async () => {
+      try {
+        const response = await axios.put(`${URL_REACT}/home`, { userId, name });
+        const { data } = response;
+        setEntries(data[0].registers);
+
+      } catch (error) {
+        alert(error.message);
+        throw new Error(error.message);
+      }
+    };
+    fetcher();
+
+    return () => {
+      console.log('Cleaning');
+      controller.abort();
+    };
+  };
 
   const navigate = useNavigate();
 
-  // console.log(wallet);
   return (
     <div>
       <StyledHome>
@@ -60,24 +97,41 @@ function Home() {
 
         <div>
           {
-            wallet.length === 0 ?
+            entries.length === 0 ?
               <p className="no-register">
                 Não há registros de
                 entrada ou saída
               </p> :
               <>
                 <ul>
-                  {wallet.map(({ value, description, now, type }) => (
-                    <li key={value + description}>
-                      <div>
-                        <p>{now}</p>
-                        <p>{description}</p>
-                      </div>
-                      <div>
-                        <StyledIncome type={type}>{value}</StyledIncome>
-                      </div>
-                    </li>
-                  ))}
+                  {entries.map((data, index) => {
+                    const { value, description, now, type } = data;
+                    console.log(data);
+                    return (
+                      <li key={value + description}>
+                        <div>
+                          <p>{now}</p>
+                          <button
+                            type="button"
+                            onClick={() => navigate(type === 'income' ?
+                              `/editar-entrada/${userId}${index}` :
+                              `/editar-saida/${userId}${index}`
+                            )}
+                          >{description}</button>
+                        </div>
+                        <div>
+                          <StyledIncome type={type}>{value}</StyledIncome>
+                        </div>
+                        <button
+                          type="button"
+                          name={index}
+                          onClick={({ target }) => deleteRegister(target)}
+                        >
+                          X
+                        </button>
+                      </li>
+                    )
+                  })}
 
                 </ul>
                 <div>
@@ -114,7 +168,7 @@ const StyledIncome = styled.p`
 `;
 
 const StyledTotal = styled.h4`
-  color: ${({ color }) => color};
+  color: ${(props) => props.color};
 `;
 
 const StyledHome = styled.div`
@@ -176,7 +230,6 @@ const StyledHome = styled.div`
         div {
           display: flex;
           flex-direction: row;
-          background-color: white;
 
           p {
               margin: 10px;
@@ -189,6 +242,16 @@ const StyledHome = styled.div`
             p:first-of-type{
               color: #C6C6C6;
             }
+
+            button {
+              background-color: transparent;
+              border: none;
+            }
+            button:hover {
+              background-color: #7e35be;
+              border-radius: 8px;
+              border: 1px solid white;
+            }
           }
 
           &:nth-child(2) {
@@ -196,10 +259,22 @@ const StyledHome = styled.div`
             width: 25%;
             justify-content: flex-end;
 
-            /* p {
-              color: ${({ type }) => type === 'income' ? 'green' : String(type)};
-            } */
+            button {
+              background-color: blue;
+              border: none;
+            }
+
           }
+
+        }
+
+        button {
+          background-color: transparent;
+          border: none;
+          padding: 8px;
+        }
+        button:hover {
+          background-color: red;
         }
       }
     }

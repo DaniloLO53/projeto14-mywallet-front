@@ -2,12 +2,12 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from 'axios';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Context from '../context/Context';
 
 // dotenv.config();
 
-function Income() {
+function OutcomeEdit() {
   const { loading, setLoading, contextEmail } = useContext(Context);
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
@@ -16,8 +16,11 @@ function Income() {
   console.log(contextEmail)
 
   const navigate = useNavigate();
+  let { id } = useParams();
 
-  function addRegister() {
+  console.log(id)
+
+  function editOutcome() {
     if (value.length === 0 || description.length === 0) return;
 
     const URL = process.env.REACT_APP_API_URL;
@@ -39,15 +42,18 @@ function Income() {
         now: dayjs(Date.now()).format('DD/MM'),
         value,
         description,
-        type: 'income',
+        type: 'outcome',
+        userId: id.slice(0, id.length - 1),
+        index: id.slice(-1),
       };
 
       try {
-        const dataFetched = await axios.put(`${URL}/nova-entrada`, registerData, config);
-        console.log('From PUT /nova-entrada ', dataFetched);
+        console.log('Sending...')
+        const dataFetched = await axios.put(`${URL}/editar-saida/${id}`, registerData, config);
+        console.log(dataFetched);
         // console.log(dataFetched.data)
         // setWallet(dataFetched.data);
-        setLoading(false);
+        // setLoading(false);
         navigate('/home');
       } catch (error) {
         throw new Error(error.message);
@@ -64,10 +70,8 @@ function Income() {
 
   return (
     <div>
-      <StyledIncome>
-        <figure>
-          <img alt="Income" src="./MyWallet.png" />
-        </figure>
+      <StyledOutcomeEdit>
+        <h2>Editar Entrada</h2>
 
         <form>
           <label htmlFor="value">
@@ -91,18 +95,18 @@ function Income() {
 
           <button
             type="button"
-            onClick={addRegister}
+            onClick={editOutcome}
           >
-            Salvar entrada
+            Atualizar saída
           </button>
 
         </form>
-      </StyledIncome>
+      </StyledOutcomeEdit>
     </div>
   )
 };
 
-const StyledIncome = styled.div`
+const StyledOutcomeEdit = styled.div`
   background-color: #7e35be;;
   display: flex;
   flex-direction: column;
@@ -110,9 +114,12 @@ const StyledIncome = styled.div`
   justify-content: center;
   min-height: 100vh;
 
-  figure {
-    margin-bottom: 30px;    
+  h2 {
+    margin-bottom: 30px;
+    color: white;
+    width: 78%;
   }
+
   form {
     /* background-color: yellow; */
     display: flex;
@@ -156,4 +163,4 @@ const StyledIncome = styled.div`
   }
 `;
 
-export { Income, StyledIncome };
+export { OutcomeEdit, StyledOutcomeEdit };

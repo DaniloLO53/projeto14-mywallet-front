@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 function Login() {
-  const { loading, setLoading } = useContext(Context);
+  const { loading, setLoading, setContextEmail, contextEmail } = useContext(Context);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
   const navigate = useNavigate();
 
-  const { setSignupData } = useContext(Context);
+  const { setSignupData, setUserId } = useContext(Context);
 
   const handleClick = () => {
     const URL = process.env.REACT_APP_API_URL;
@@ -26,7 +26,11 @@ function Login() {
           email,
           password,
         });
-        setSignupData(dataFetched);
+        const { data } = dataFetched;
+        console.log('Data fetched at login button: ', data);
+        setContextEmail(email);
+        setSignupData(data.token);
+        setUserId(data.userId);
         setLoading(false);
         navigate('/home');
       } catch (error) {

@@ -9,8 +9,8 @@ function Cadastro() {
   const {
     loading,
     setLoading,
-    setEmail,
-    email,
+    setContextEmail,
+    contextEmail,
     setPassword,
     password,
     name,
@@ -25,9 +25,10 @@ function Cadastro() {
     const URL_REACT = process.env.REACT_APP_API_URL;
     console.log(process.env)
     const payload = {
-      email,
+      email: contextEmail,
       name,
       password,
+      confirmPassword,
     };
     const controller = new AbortController();
     // const { signal } = controller;
@@ -76,8 +77,8 @@ function Cadastro() {
             id="email"
             disabled={loading}
             placeholder="E-mail"
-            value={email}
-            onChange={({ target }) => setEmail(target.value)}
+            value={contextEmail}
+            onChange={({ target }) => setContextEmail(target.value)}
           />
         </label>
         <label htmlFor="password">
@@ -106,7 +107,7 @@ function Cadastro() {
           // disabled={disabled}
           onClick={() => handleClick()}
         >
-          {loading ? <Loading /> : 'Cadastrar'}
+          {'Cadastrar'}
         </button>
 
         <button

@@ -8,23 +8,23 @@ import Context from '../context/Context';
 // dotenv.config();
 
 function Outcome() {
-  const { loading, setLoading } = useContext(Context);
+  const { loading, setLoading, contextEmail } = useContext(Context);
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
-  const { wallet, setWallet, signupData } = useContext(Context);
+  const { signupData, email } = useContext(Context);
 
-  const { email } = signupData.data;
+  console.log(contextEmail)
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+  function addRegister() {
     if (value.length === 0 || description.length === 0) return;
 
     const URL = process.env.REACT_APP_API_URL;
 
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        authorization: signupData,
       },
     };
     const controller = new AbortController();
@@ -35,19 +35,18 @@ function Outcome() {
     // console.log(signupData)
 
     const fetcher = async () => {
+      const registerData = {
+        now: dayjs(Date.now()).format('DD/MM'),
+        value,
+        description,
+        type: 'outcome',
+      };
+
       try {
-        const dataFetched = await axios.put(URL,
-          {
-            data: {
-              wallet,
-              email
-            },
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          });
+        const dataFetched = await axios.put(`${URL}/nova-saida`, registerData, config);
+        console.log('From PUT /nova-saida ', dataFetched);
         // console.log(dataFetched.data)
-        setWallet(dataFetched.data);
+        // setWallet(dataFetched.data);
         setLoading(false);
         navigate('/home');
       } catch (error) {
@@ -60,7 +59,8 @@ function Outcome() {
       console.log('Cleaning');
       controller.abort();
     };
-  }, [wallet]);
+  };
+
 
   return (
     <div>
@@ -91,15 +91,9 @@ function Outcome() {
 
           <button
             type="button"
-            onClick={() => setWallet((prevState) => [...prevState, {
-              type: 'outcome',
-              value,
-              description,
-              now: dayjs(Date.now()).format('DD/MM')
-            }
-            ])}
+            onClick={addRegister}
           >
-            Salvar saída
+            Salvar saida
           </button>
 
         </form>
