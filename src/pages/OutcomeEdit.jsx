@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Context from '../context/Context';
 
 function OutcomeEdit() {
-  const { signupData } = useContext(Context);
+  const { userInfos } = useContext(Context);
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
 
@@ -20,7 +20,7 @@ function OutcomeEdit() {
 
     const config = {
       headers: {
-        authorization: signupData,
+        authorization: userInfos.signupData,
       },
     };
     const controller = new AbortController();
@@ -39,7 +39,14 @@ function OutcomeEdit() {
         await axios.put(`${URL}/editar-saida/${id}`, registerData, config);
         navigate('/home');
       } catch (error) {
-        throw new Error(error.message);
+        const { response } = error;
+        if (response.status === 401) {
+          alert('Não autorizado');
+          throw new Error(`Não autorizado: ${error.message}`);
+        } else {
+          alert('Erro no servidor...');
+          throw new Error(`Erro no servidor: ${error.message}`);
+        }
       }
     };
     fetcher();

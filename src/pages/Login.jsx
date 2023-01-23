@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 function Login() {
-  const { setContextEmail, setSignupData, setUserId, setName } = useContext(Context);
+  const { setUserInfos } = useContext(Context);
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
@@ -23,14 +23,27 @@ function Login() {
           password,
         });
         const { data } = dataFetched;
-        setContextEmail(email);
-        setName(data.name)
-        setSignupData(data.token);
-        setUserId(data.userId);
+        setUserInfos((prevState) => ({
+          ...prevState,
+          contextEmail: email,
+          name: data.name,
+          signupData: data.token,
+          userId: data.userId,
+        }));
+        // setContextEmail(email);
+        // setName(data.name)
+        // setSignupData(data.token);
+        // setUserId(data.userId);
         navigate('/home');
 
       } catch (error) {
-        throw new Error(error.message);
+        const { response } = error;
+        if (response.status === 403) {
+          return alert('Usuário não existe...');
+        } else {
+          alert('Erro no servidor...');
+          throw new Error(`Erro no servidor: ${error.message}`);
+        }
       }
     };
     fetcher();

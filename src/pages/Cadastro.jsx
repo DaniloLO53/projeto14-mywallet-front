@@ -6,25 +6,29 @@ import { StyledLogin } from './Login';
 
 function Cadastro() {
   const {
-    setContextEmail,
-    contextEmail,
-    setPassword,
-    password,
-    name,
-    setName,
-    confirmPassword,
-    setConfirmPassword,
+    userInfos,
+    setUserInfos,
   } = useContext(Context);
 
   const navigate = useNavigate();
 
   const handleClick = () => {
+    console.log(userInfos)
+    const { password, contextEmail, name, confirmPassword } = userInfos;
+    if (password.length === 0 || contextEmail.length === 0 || name.length === 0) {
+      return alert('Campos não podem estar vazios...');
+    }
+
+    if (password !== confirmPassword) {
+      return alert('A confirmação da senha não bate...');
+    }
+
     const URL_REACT = process.env.REACT_APP_API_URL;
     const payload = {
-      email: contextEmail,
-      name,
-      password,
-      confirmPassword,
+      email: userInfos.contextEmail,
+      name: userInfos.name,
+      password: userInfos.password,
+      confirmPassword: userInfos.confirmPassword,
     };
     const controller = new AbortController();
     // const { signal } = controller;
@@ -35,8 +39,13 @@ function Cadastro() {
         navigate('/');
 
       } catch (error) {
-        alert(error.message);
-        throw new Error(error.message);
+        const { response } = error;
+        if (response.status === 409) {
+          return alert('Usuário já cadastrado...');
+        } else {
+          alert('Erro no servidor...');
+          throw new Error(`Erro no servidor: ${error.message}`);
+        }
       }
     };
     fetcher();
@@ -59,8 +68,11 @@ function Cadastro() {
             type="text"
             id="name"
             placeholder="Nome"
-            value={name}
-            onChange={({ target }) => setName(target.value)}
+            value={userInfos.name}
+            onChange={({ target }) => setUserInfos((prevState) => ({
+              ...prevState,
+              name: target.value,
+            }))}
           />
         </label>
         <label htmlFor="email">
@@ -68,8 +80,11 @@ function Cadastro() {
             type="text"
             id="email"
             placeholder="E-mail"
-            value={contextEmail}
-            onChange={({ target }) => setContextEmail(target.value)}
+            value={userInfos.contextEmail}
+            onChange={({ target }) => setUserInfos((prevState) => ({
+              ...prevState,
+              contextEmail: target.value,
+            }))}
           />
         </label>
         <label htmlFor="password">
@@ -77,8 +92,11 @@ function Cadastro() {
             type="text"
             id="password"
             placeholder="Senha"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
+            value={userInfos.password}
+            onChange={({ target }) => setUserInfos((prevState) => ({
+              ...prevState,
+              password: target.value,
+            }))}
           />
         </label>
         <label htmlFor="confirmPassword">
@@ -86,8 +104,11 @@ function Cadastro() {
             type="text"
             id="confirmPassword"
             placeholder="Confirme a senha"
-            value={confirmPassword}
-            onChange={({ target }) => setConfirmPassword(target.value)}
+            value={userInfos.confirmPassword}
+            onChange={({ target }) => setUserInfos((prevState) => ({
+              ...prevState,
+              confirmPassword: target.value,
+            }))}
           />
         </label>
 

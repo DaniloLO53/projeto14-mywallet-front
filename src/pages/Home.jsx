@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Context from '../context/Context';
 
 function Home() {
-  const { signupData, userId, name } = useContext(Context);
+  const { userInfos } = useContext(Context);
   const [total, setTotal] = useState(0);
   const [wallet, setWallet] = useState([]);
   const [entries, setEntries] = useState([]);
@@ -20,7 +20,7 @@ function Home() {
   }, [entries.length]);
 
   useEffect(() => {
-    const userRegister = wallet.find((data) => data.userId === userId);
+    const userRegister = wallet.find((data) => data.userId === userInfos.userId);
     setEntries(userRegister?.registers || []);
 
   }, [wallet.length]);
@@ -32,7 +32,7 @@ function Home() {
 
     const config = {
       headers: {
-        authorization: signupData,
+        authorization: userInfos.signupData,
       },
     };
 
@@ -41,8 +41,14 @@ function Home() {
         const { data: registers } = await axios.get(`${URL_REACT}/home`, config);
         setWallet(registers);
       } catch (error) {
-        alert(error.message);
-        throw new Error(error.message);
+        const { response } = error;
+        if (response.status === 401) {
+          alert('Não autorizado');
+          throw new Error(`Não autorizado: ${error.message}`);
+        } else {
+          alert('Erro no servidor...');
+          throw new Error(`Erro no servidor: ${error.message}`);
+        }
       }
     };
     fetcher();
@@ -54,6 +60,11 @@ function Home() {
   }, []);
 
   async function deleteRegister(target) {
+    const config = {
+      headers: {
+        authorization: userInfos.signupData,
+      },
+    };
     const { name } = target;
     const URL_REACT = process.env.REACT_APP_API_URL;
     const controller = new AbortController();
@@ -61,13 +72,20 @@ function Home() {
 
     const fetcher = async () => {
       try {
-        const response = await axios.put(`${URL_REACT}/home`, { userId, name });
+        const response = await axios.put(`${URL_REACT}/home`,
+          { userId: userInfos.userId, name }, config);
         const { data } = response;
         setEntries(data[0].registers);
 
       } catch (error) {
-        alert(error.message);
-        throw new Error(error.message);
+        const { response } = error;
+        if (response.status === 401) {
+          alert('Não autorizado');
+          throw new Error(`Não autorizado: ${error.message}`);
+        } else {
+          alert('Erro no servidor...');
+          throw new Error(`Erro no servidor: ${error.message}`);
+        }
       }
     };
     fetcher();
@@ -80,13 +98,11 @@ function Home() {
 
   const navigate = useNavigate();
 
-  console.log(name)
-
   return (
     <div>
       <StyledHome>
         <div>
-          <h2>Olá, {name}</h2>
+          <h2>Olá, {userInfos.name}</h2>
           <img alt="vector" src="./Vector.png"></img>
         </div>
 
@@ -109,13 +125,13 @@ function Home() {
                           <button
                             type="button"
                             onClick={() => navigate(type === 'income' ?
-                              `/editar-entrada/${userId}${index}` :
-                              `/editar-saida/${userId}${index}`
+                              `/editar-entrada/${userInfos.userId}${index}` :
+                              `/editar-saida/${userInfos.userId}${index}`
                             )}
                           >{description}</button>
                         </div>
                         <div>
-                          <StyledIncome type={type}>{value}</StyledIncome>
+                          <StyledIncome type={type}>{`R$ ${Number(value).toFixed(2)}`}</StyledIncome>
                         </div>
                         <button
                           type="button"
@@ -131,7 +147,7 @@ function Home() {
                 </ul>
                 <div>
                   <h3>SALDO</h3>
-                  <StyledTotal color={total >= 0 ? 'green' : 'red'}>{total}</StyledTotal>
+                  <StyledTotal color={total >= 0 ? 'green' : 'red'}>{`R$ ${Number(total).toFixed(2)}`}</StyledTotal>
                 </div>
               </>
           }
